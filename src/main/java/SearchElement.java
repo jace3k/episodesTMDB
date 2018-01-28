@@ -34,6 +34,18 @@ public class SearchElement extends BorderPane {
         setup();
     }
 
+    public SearchElement(String errMsg) {
+        this.name = new Label(errMsg);
+        this.date = new Label("-");
+        this.mediaType = new Label("-");
+        this.rate = new Label("-");
+        this.id = 0;
+        this.imgUrl = "";
+
+        setMouseEvents();
+        setup();
+    }
+
     private void setup() {
         String imgUrl;
         if(Objects.equals(this.imgUrl, "")) imgUrl = "no_img.jpg";

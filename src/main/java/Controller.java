@@ -1,6 +1,7 @@
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -15,29 +16,57 @@ public class Controller implements Initializable {
     public VBox searchBox;
     public TextField searchField;
     public Button searchButton;
-
-    private RequestApi requestApi;
+    public Button prev_page;
+    public Button next_page;
+    public Label current_page;
+    public Label total_pages;
+    private int page;
+    private int totalPages;
 
     public void initialize(URL location, ResourceBundle resources) {
-        requestApi = new RequestApi();
+        prev_page.setDisable(true);
+        next_page.setDisable(true);
+        page = 1;
+        totalPages = 1;
         Platform.runLater(()-> {
-            discover("https://api.themoviedb.org/3/discover/movie?&language=pl-PL&sort_by=popularity.desc&include_adult=false&include_video=false&page=1");
-            discoverTV("https://api.themoviedb.org/3/discover/tv?language=pl-PL&sort_by=popularity.desc&page=1&include_null_first_air_dates=false");
+            discover();
+            discoverTV();
+        });
+        next_page.setOnAction(event -> {
+            page++;
+            prev_page.setDisable(false);
+            searchElements();
         });
 
-        searchButton.setOnAction(event -> searchElements());
+        prev_page.setOnAction(event -> {
+            page--;
+            if (page == 1) prev_page.setDisable(true);
+            searchElements();
+        });
+
+        searchButton.setOnAction(event -> {
+            page = 1;
+            searchElements();
+
+        });
     }
 
     private void searchElements() {
         Platform.runLater(()-> {
-            ArrayList<SearchElement> searchElements = requestApi.getSearchResults(searchField.getText());
+            ArrayList<Object> elementsAndTotal = RequestApi.search(searchField.getText(), page);
+            ArrayList<SearchElement> searchElements = (ArrayList<SearchElement>) elementsAndTotal.get(0);
+            totalPages = (int) elementsAndTotal.get(1);
             searchBox.getChildren().clear();
             searchBox.getChildren().addAll(searchElements);
+            current_page.setText(page + "");
+            total_pages.setText(totalPages + "");
+            if (totalPages > page) next_page.setDisable(false);
+            if (page == totalPages) next_page.setDisable(true);
         });
     }
 
     private void discover(String address, boolean isMovie) {
-        ArrayList<HomeElement> homeElements = requestApi.getDiscover(address);
+        ArrayList<HomeElement> homeElements = RequestApi.discover(address);
 
         for(HomeElement element : homeElements) {
             if(isMovie) Platform.runLater(()->addMovieToBox(element));
@@ -45,12 +74,12 @@ public class Controller implements Initializable {
         }
     }
 
-    private void discover(String address) {
-        discover(address, true);
+    private void discover() {
+        discover("https://api.themoviedb.org/3/discover/movie?&language=pl-PL&sort_by=popularity.desc&include_adult=false&include_video=false&page=1", true);
     }
 
-    private void discoverTV(String address){
-        discover(address, false);
+    private void discoverTV(){
+        discover("https://api.themoviedb.org/3/discover/tv?language=pl-PL&sort_by=popularity.desc&page=1&include_null_first_air_dates=false", false);
     }
 
     private void addMovieToBox(HomeElement element) {
