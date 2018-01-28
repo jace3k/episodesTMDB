@@ -84,7 +84,6 @@ public class RequestApi {
                     JSONObject result = results.getJSONObject(i);
 
                     String name = "No name", date = "", mediaType = "", poster = "";
-                    int [] genres;
                     double vote = 0;
                     int id = 0;
 
@@ -102,25 +101,10 @@ public class RequestApi {
 
                     if (result.has("id")) id = result.getInt("id");
 
-                    if (result.has("genre_ids")) {
-                        genres = new int[result.getJSONArray("genre_ids").length()];
 
-                        for (int j = 0; j < result.getJSONArray("genre_ids").length(); j++) {
-                            genres[j] = (int) result.getJSONArray("genre_ids").get(j);
-                        }
-                    } else genres = new int[] {0};
-
-
-                    elements.add(new SearchElement(
-                            name,
-                            date,
-                            genres,
-                            mediaType,
-                            vote,
-                            id,
-                            poster
-                    ));
+                    elements.add(new SearchElement(name, date, mediaType, vote, id, poster));
                 }
+                if (results.length() == 0) elements.add(new SearchElement("Nic nie znaleziono"));
                 totalPages = searchJSON.getJSONObject("response").getInt("total_pages");
             } else {
                 elements.add(new SearchElement(searchJSON.getJSONObject("response").getString("status_message")));
@@ -131,71 +115,5 @@ public class RequestApi {
         elementsAndTotalPages.add(elements);
         elementsAndTotalPages.add(totalPages);
         return elementsAndTotalPages;
-    }
-
-    public static ArrayList<SearchElement> getSearchResults(String key) {
-        ArrayList<SearchElement> elements = new ArrayList<>();
-
-        JSONObject search = makeRequest(search_url + key + "&language=pl-PL&api_key=" + apiKey);
-
-        try {
-            int totalResults = Integer.parseInt(search.getString("total_results"));
-            System.err.println("Total results: " + totalResults);
-            JSONArray array = search.getJSONArray("results");
-
-            for(int i = 0; i<20; i++) {
-                JSONObject element = (JSONObject) array.get(i);
-                String name;
-                try {
-                    name = element.getString("title");
-                } catch (JSONException o) {
-                    name = element.getString("name");
-                }
-                String date;
-                try {
-                    date = element.getString("first_air_date");
-                } catch (JSONException o) {
-                    try {
-                        date = element.getString("release_date");
-                    } catch (JSONException jo) {
-                        date = "-";
-                    }
-                }
-                String mediaType = element.getString("media_type");
-                int id = element.getInt("id");
-                double vote;
-                try {
-                    vote = element.getDouble("vote_average");
-                } catch (JSONException o) {
-                    vote = 0.0;
-                }
-                String imgUrl;
-                try {
-                    imgUrl = element.getString("poster_path");
-                    if(imgUrl.equals("")) throw new JSONException("No poster_path.");
-                } catch (JSONException o) {
-                    System.err.println("Brak pola poster_path.");
-                    imgUrl = "";
-                }
-                JSONArray genreIds;
-                int[] genres = new int[1];
-                try {
-                    genreIds = element.getJSONArray("genre_ids");
-                    genres = new int[genreIds.length()];
-                    for (int j = 0; j < genreIds.length(); j++) {
-                        genres[j] = genreIds.getInt(j);
-                    }
-                } catch (JSONException o) {
-                    System.err.println("Brak pola gatunki.");
-                }
-
-                SearchElement searchElement = new SearchElement(name, date, genres, mediaType, vote, id, imgUrl);
-                elements.add(searchElement);
-            }
-
-        } catch (JSONException e) {
-            System.err.println("Koniec wynikow.");
-        }
-        return elements;
     }
 }

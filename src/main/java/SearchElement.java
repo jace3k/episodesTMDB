@@ -21,7 +21,7 @@ public class SearchElement extends BorderPane {
     Image image;
     String imgUrl;
 
-    public SearchElement(String name, String date, int[] genres, String mediaType, double rate, int id, String imgUrl) {
+    public SearchElement(String name, String date, String mediaType, double rate, int id, String imgUrl) {
         this.name = new Label(name);
         this.date = new Label(date);
         //this.genres = new Label(genres);
