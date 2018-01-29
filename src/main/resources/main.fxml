@@ -106,7 +106,22 @@
                      </center>
                   </BorderPane>
                </content></Tab>
-                <Tab text="Profil" />
+                <Tab text="Profil">
+               <content>
+                  <BorderPane prefHeight="200.0" prefWidth="200.0">
+                     <top>
+                        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                          <items>
+                            <Button fx:id="refresh" mnemonicParsing="false" text="Odśwież" />
+                              <Label text="Lista ulubionych" />
+                          </items>
+                        </ToolBar>
+                     </top>
+                     <center>
+                        <VBox fx:id="fav_list" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
+                     </center>
+                  </BorderPane>
+               </content></Tab>
             </tabs>
         </TabPane>
     </center>

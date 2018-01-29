@@ -1,3 +1,4 @@
+import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
@@ -24,7 +25,6 @@ public class SearchElement extends BorderPane {
     public SearchElement(String name, String date, String mediaType, double rate, int id, String imgUrl) {
         this.name = new Label(name);
         this.date = new Label(date);
-        //this.genres = new Label(genres);
         this.mediaType = new Label(mediaType);
         this.rate = new Label(rate + "");
         this.id = id;
@@ -65,12 +65,20 @@ public class SearchElement extends BorderPane {
 
         BorderPane bottomPane = new BorderPane();
         bottomPane.setCenter(genres);
-        bottomPane.setRight(rate);
+        bottomPane.setRight(mediaType);
         setBottom(bottomPane);
+
+        setStyle("-fx-border-color: black;");
+
+        //// TODO: klikajace elementy w profile
+        //// TODO: kalendarz gugla - eksport
+        //// TODO: serializacja
     }
 
     private void createImage(String url) {
         imageView = new ImageView();
+        imageView.setFitHeight(200);
+        imageView.setFitWidth(120);
         image = new Image(url, 120, 200, false, false);
         imageView.setImage(image);
     }
@@ -84,5 +92,27 @@ public class SearchElement extends BorderPane {
             setEffect(new DropShadow(0, Color.ALICEBLUE));
             sceneProperty().get().setCursor(Cursor.DEFAULT);
         });
+
+        setOnMouseClicked(event -> {
+            Lo.g("Media type: " + mediaType);
+            if (mediaType.getText().equals("tv")) openTVWindow(event);
+            else openMovieWindow(event);
+        });
     }
+
+    private void openTVWindow(Event event) {
+        Profile.getProfile().currentJSON = RequestApi.getTVDetails(id);
+        Profile.getProfile().openWindow(event, "tv.fxml");
+    }
+
+    private void openMovieWindow(Event event) {
+        Profile.getProfile().currentJSON = RequestApi.getMovieDetails(id);
+        Lo.g("ID FILMU: " + id);
+        Profile.getProfile().openWindow(event, "movie.fxml");
+    }
+
+
+
+
+
 }

@@ -14,9 +14,11 @@ public class RequestApi {
     public static final String apiKey = "e968d24a995806e222b5f7240e0c9a6b";
     public static final String base_url = "http://image.tmdb.org/t/p/";
     public static final String search_url = "https://api.themoviedb.org/3/search/multi?query=";
+    public static final String movie_url = "https://api.themoviedb.org/3/movie/";
+    public static final String tv_url = "https://api.themoviedb.org/3/tv/";
     public static String size = "w300";
 
-    public static JSONObject makeRequest(String url) {
+    private static JSONObject makeRequest(String url) {
         JSONObject jsonObject = new JSONObject();
 
         try {
@@ -51,7 +53,7 @@ public class RequestApi {
         return new JSONObject(response.toString());
     }
 
-    public static ArrayList<HomeElement> discover(String url) {
+    public static ArrayList<HomeElement> discover(String url, boolean isMovie) {
         ArrayList<HomeElement> elements = new ArrayList<>();
         JSONObject discoverJSON = makeRequest(url + "&api_key=" + apiKey);
         try {
@@ -60,10 +62,10 @@ public class RequestApi {
                     JSONObject result = discoverJSON.getJSONObject("response").getJSONArray("results").getJSONObject(i);
                     String title = "title";
                     if (result.has("name")) title = "name";
-                    elements.add(new HomeElement(result.getString("poster_path"), result.getString(title), result.getInt("id")));
+                    elements.add(new HomeElement(result.getString("poster_path"), result.getString(title), result.getInt("id"), isMovie));
                 }
             } else {
-                elements.add(new HomeElement("", discoverJSON.getJSONObject("response").getString("status_message"), 0));
+                elements.add(new HomeElement("", discoverJSON.getJSONObject("response").getString("status_message"), 0, isMovie));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -74,7 +76,7 @@ public class RequestApi {
     public static ArrayList<Object> search(String key, int page) {
         ArrayList<Object> elementsAndTotalPages = new ArrayList<>();
         ArrayList<SearchElement> elements = new ArrayList<>();
-        JSONObject searchJSON = makeRequest(search_url + key + "&language=pl-PL&api_key=" + apiKey + "&page=" + page);
+        JSONObject searchJSON = makeRequest(search_url + key + "&language=pl-PL&page=" + page + "&api_key=" + apiKey);
 
         int totalPages = 1;
         try {
@@ -115,5 +117,17 @@ public class RequestApi {
         elementsAndTotalPages.add(elements);
         elementsAndTotalPages.add(totalPages);
         return elementsAndTotalPages;
+    }
+
+    public static JSONObject getMovieDetails(int id) {
+        return makeRequest(movie_url + id + "?api_key=" + apiKey + "&language=pl-PL");
+    }
+
+    public static JSONObject getTVDetails(int id) {
+        return makeRequest(tv_url + id + "?api_key=" + apiKey + "&language=pl-PL");
+    }
+
+    public static JSONObject getSeasonDetails(int id, int seasonNo) {
+        return makeRequest(tv_url + id + "/season/" + seasonNo + "?api_key=" + apiKey + "&language=pl-PL");
     }
 }

@@ -20,6 +20,8 @@ public class Controller implements Initializable {
     public Button next_page;
     public Label current_page;
     public Label total_pages;
+    public VBox fav_list;
+    public Button refresh;
     private int page;
     private int totalPages;
 
@@ -49,6 +51,9 @@ public class Controller implements Initializable {
             searchElements();
 
         });
+
+        refreshFavs();
+        refresh.setOnAction(event -> refreshFavs());
     }
 
     private void searchElements() {
@@ -66,7 +71,7 @@ public class Controller implements Initializable {
     }
 
     private void discover(String address, boolean isMovie) {
-        ArrayList<HomeElement> homeElements = RequestApi.discover(address);
+        ArrayList<HomeElement> homeElements = RequestApi.discover(address, isMovie);
 
         for(HomeElement element : homeElements) {
             if(isMovie) Platform.runLater(()->addMovieToBox(element));
@@ -88,5 +93,14 @@ public class Controller implements Initializable {
 
     private void addTVToBox(HomeElement element) {
         tvBox.getChildren().add(element);
+    }
+
+    public void refreshFavs() {
+        Platform.runLater(() -> {
+            fav_list.getChildren().removeAll(fav_list.getChildren());
+            for (Element item : Profile.getProfile().favorites) {
+                fav_list.getChildren().add(new Label(item.getName() + " - " + item.getType() + " - " + item.getId()));
+            }
+        });
     }
 }
