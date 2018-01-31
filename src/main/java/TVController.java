@@ -52,6 +52,7 @@ public class TVController implements Initializable {
 
             if (jsonData.has("number_of_seasons"))
                 for (int i = 1; i <= jsonData.getInt("number_of_seasons"); i++)
+                    //noinspection unchecked
                     seasons_box.getItems().add(i);
 
             StringBuilder genres = new StringBuilder();
@@ -73,6 +74,7 @@ public class TVController implements Initializable {
 
         });
 
+        //noinspection Duplicates
         if (Profile.getProfile().hasInFavs(id)) {
             add_to_fav.setVisible(false);
             del_from_fav.setVisible(true);
@@ -81,16 +83,20 @@ public class TVController implements Initializable {
             del_from_fav.setVisible(false);
         }
 
+        //noinspection Duplicates
         add_to_fav.setOnAction(event -> {
-            Profile.getProfile().addToFavs(new Element(title.getText(), id, "TV"));
+            Profile.getProfile().addToFavs(new Element(title.getText(), id, "tv"));
             add_to_fav.setVisible(false);
             del_from_fav.setVisible(true);
+            FavsRefresher.refresh();
         });
 
+        //noinspection Duplicates
         del_from_fav.setOnAction(event -> {
             Profile.getProfile().removeFromFavs(id);
             del_from_fav.setVisible(false);
             add_to_fav.setVisible(true);
+            FavsRefresher.refresh();
         });
 
     }

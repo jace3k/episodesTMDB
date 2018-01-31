@@ -9,12 +9,12 @@ import javafx.stage.Stage;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Profile {
-    public JSONObject currentJSON;
+public class Profile implements Serializable {
+    public transient JSONObject currentJSON;
     public ArrayList<Element> favorites;
-
     private static Profile profile = new Profile();
 
     private Profile() {
@@ -23,6 +23,10 @@ public class Profile {
 
     public static Profile getProfile() {
         return profile;
+    }
+
+    public static void setNewProfile(Profile p) {
+        profile = p;
     }
 
     public void openWindow(Event event, String layout) {
@@ -35,6 +39,7 @@ public class Profile {
             Scene scene = new Scene(root);
             dialog.setScene(scene);
             dialog.show();
+
         } catch (IOException e) {
             e.printStackTrace();
             Lo.g("Problem ze zmianą okna.");
@@ -43,7 +48,7 @@ public class Profile {
 
     public boolean hasInFavs(int id) {
         for (Element item : favorites) {
-            if (item.getId() == id) return true;
+            if (item.get_Id() == id) return true;
         }
         return false;
     }
@@ -54,7 +59,7 @@ public class Profile {
 
     public void removeFromFavs(int id) {
         for (Element item : favorites) {
-            if (item.getId() == id) Platform.runLater(() -> favorites.remove(item));
+            if (item.get_Id() == id) Platform.runLater(() -> favorites.remove(item));
         }
     }
 }

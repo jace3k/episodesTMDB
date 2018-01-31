@@ -67,6 +67,7 @@ public class MovieController implements Initializable {
             e.printStackTrace();
         }
 
+        //noinspection Duplicates
         if (Profile.getProfile().hasInFavs(id)) {
             add_to_fav.setVisible(false);
             del_from_fav.setVisible(true);
@@ -75,16 +76,20 @@ public class MovieController implements Initializable {
             del_from_fav.setVisible(false);
         }
 
+        //noinspection Duplicates
         add_to_fav.setOnAction(event -> {
             Profile.getProfile().addToFavs(new Element(title.getText(), id, "FILM"));
             add_to_fav.setVisible(false);
             del_from_fav.setVisible(true);
+            FavsRefresher.refresh();
         });
 
+        //noinspection Duplicates
         del_from_fav.setOnAction(event -> {
             Profile.getProfile().removeFromFavs(id);
             del_from_fav.setVisible(false);
             add_to_fav.setVisible(true);
+            FavsRefresher.refresh();
         });
     }
 

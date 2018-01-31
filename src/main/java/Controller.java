@@ -3,6 +3,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -21,7 +22,8 @@ public class Controller implements Initializable {
     public Label current_page;
     public Label total_pages;
     public VBox fav_list;
-    public Button refresh;
+    public BorderPane bp;
+
     private int page;
     private int totalPages;
 
@@ -52,13 +54,16 @@ public class Controller implements Initializable {
 
         });
 
+
+        FavsRefresher.setController(this);
         refreshFavs();
-        refresh.setOnAction(event -> refreshFavs());
+
     }
 
     private void searchElements() {
         Platform.runLater(()-> {
             ArrayList<Object> elementsAndTotal = RequestApi.search(searchField.getText(), page);
+            //noinspection unchecked
             ArrayList<SearchElement> searchElements = (ArrayList<SearchElement>) elementsAndTotal.get(0);
             totalPages = (int) elementsAndTotal.get(1);
             searchBox.getChildren().clear();
@@ -99,7 +104,7 @@ public class Controller implements Initializable {
         Platform.runLater(() -> {
             fav_list.getChildren().removeAll(fav_list.getChildren());
             for (Element item : Profile.getProfile().favorites) {
-                fav_list.getChildren().add(new Label(item.getName() + " - " + item.getType() + " - " + item.getId()));
+                fav_list.getChildren().add(new SimpleElement(item.getName(), item.get_Id(), item.getType()));
             }
         });
     }

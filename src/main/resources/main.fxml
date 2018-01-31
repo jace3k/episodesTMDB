@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
     <center>
         <TabPane side="BOTTOM" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
             <tabs>
@@ -24,7 +24,7 @@
                             <content>
                                 <VBox alignment="TOP_CENTER" prefWidth="1280.0">
                                     <children>
-                                        <Label alignment="CENTER" text="MOVIES">
+                                        <Label alignment="CENTER" text="FILMY">
                                             <font>
                                                 <Font name="Calibri" size="22.0" />
                                             </font>
@@ -112,8 +112,10 @@
                      <top>
                         <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                           <items>
-                            <Button fx:id="refresh" mnemonicParsing="false" text="Odśwież" />
-                              <Label text="Lista ulubionych" />
+                              <Label text="Lista ulubionych">
+                                 <font>
+                                    <Font name="System Italic" size="18.0" />
+                                 </font></Label>
                           </items>
                         </ToolBar>
                      </top>

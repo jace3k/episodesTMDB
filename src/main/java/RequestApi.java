@@ -86,7 +86,6 @@ public class RequestApi {
                     JSONObject result = results.getJSONObject(i);
 
                     String name = "No name", date = "", mediaType = "", poster = "";
-                    double vote = 0;
                     int id = 0;
 
                     if (result.has("name")) name = result.getString("name");
@@ -99,12 +98,10 @@ public class RequestApi {
 
                     if (result.has("poster_path")) poster = result.getString("poster_path");
 
-                    if (result.has("vote_average")) vote = result.getDouble("vote_average");
-
                     if (result.has("id")) id = result.getInt("id");
 
 
-                    elements.add(new SearchElement(name, date, mediaType, vote, id, poster));
+                    elements.add(new SearchElement(name, date, mediaType, id, poster));
                 }
                 if (results.length() == 0) elements.add(new SearchElement("Nic nie znaleziono"));
                 totalPages = searchJSON.getJSONObject("response").getInt("total_pages");
